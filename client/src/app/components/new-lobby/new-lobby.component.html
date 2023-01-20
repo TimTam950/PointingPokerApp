@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Create new lobby</h1>
+    <p>Enter your name and a new pointing poker session id will be generated for you.</p>
+    <form [formGroup]="newLobbyForm">
+      <div>
+        <label>
+          Name:
+          <input formControlName="name">
+        </label>
+      </div>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </form>
+  </mat-card-content>
+</mat-card>
