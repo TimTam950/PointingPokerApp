@@ -1,0 +1,21 @@
+<mat-card>
+  <mat-card-content>
+    <h1>Join existing lobby</h1>
+    <p>Enter your name and a new pointing poker session id will be generated for you.</p>
+    <div>
+      <div>
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="name">
+          </mat-form-field>
+      </div>
+     <div>
+       <mat-form-field appearance="fill">
+         <mat-label>Lobby Id</mat-label>
+         <input matInput [(ngModel)]="lobbyId">
+       </mat-form-field>
+     </div>
+    </div>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!name || !lobbyId">Submit</button>
+  </mat-card-content>
+</mat-card>

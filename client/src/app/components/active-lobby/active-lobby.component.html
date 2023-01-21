@@ -1,0 +1,21 @@
+<p>active-lobby works!</p>
+
+<div class="connectedUsers">
+  <div *ngFor="let user of connectedUsers">
+    <div style="text-align: left">
+      <div class="userName" style="display: inline-block">
+        {{user.name}}
+      </div>
+      <div class="userValue" style="display: inline-block">
+        <div *ngIf="user.show; else hiddenVote">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #hiddenVote>
+  <div class="black-square">
+  </div>
+</ng-template>
