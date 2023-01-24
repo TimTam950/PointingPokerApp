@@ -1,8 +1,7 @@
-<p>active-lobby works!</p>
-
-<div class="connectedUsers">
-  <div *ngFor="let user of connectedUsers">
-    <div style="text-align: left">
+<div class="active-lobby-container">
+  <h1>Welcome to your pointing poker lobby :)</h1>
+  <div class="connected-users">
+    <div class="connected-user" *ngFor="let user of connectedUsers">
       <div class="userName" style="display: inline-block">
         {{user.name}}
       </div>
@@ -14,6 +13,7 @@
     </div>
   </div>
 </div>
+
 
 <ng-template #hiddenVote>
   <div class="black-square">

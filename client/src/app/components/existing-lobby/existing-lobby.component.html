@@ -12,10 +12,14 @@
      <div>
        <mat-form-field appearance="fill">
          <mat-label>Lobby Id</mat-label>
-         <input matInput [(ngModel)]="lobbyId">
+         <input matInput [(ngModel)]="lobbyName">
        </mat-form-field>
      </div>
     </div>
-    <button mat-raised-button color="primary" type="submit" [disabled]="!name || !lobbyId">Submit</button>
+    <button mat-raised-button color="primary" type="submit"
+            [routerLink]="['/lobby', lobbyName, name]"
+            [disabled]="!name || !lobbyName">
+      Submit
+    </button>
   </mat-card-content>
 </mat-card>

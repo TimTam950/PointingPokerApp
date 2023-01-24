@@ -32,12 +32,22 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
     this.lobbyWebSocket.subscribe(dataFromSocket => {
       const socketMessage = JSON.parse(dataFromSocket as string) as SocketMessage;
       if(socketMessage.message_type === "NEW_USER_CONNECTED") {
-        this.connectedUsers.push(new UserVote(socketMessage.client_name));
+        this.addNewClients(socketMessage);
       } else if (socketMessage.message_type === "VOTE_CAST") {
         const voteToUpdate = this.connectedUsers.find(vote => vote.name === socketMessage.client_name);
+
       }
     });
 
+  }
+
+  addNewClients(socketMessage: SocketMessage) {
+    const connectedClients = socketMessage.message.split(",")
+    for(const connectedClient of connectedClients) {
+      if(!this.connectedUsers.some(existingUser => existingUser.name === connectedClient)) {
+        this.connectedUsers.push(new UserVote(connectedClient))
+      }
+    }
   }
 
   ngOnDestroy(): void {

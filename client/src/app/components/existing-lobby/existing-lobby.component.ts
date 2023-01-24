@@ -9,7 +9,7 @@ export class ExistingLobbyComponent {
 
   name: string = "";
 
-  lobbyId: string = "";
+  lobbyName: string = "";
 
   constructor() {
   }

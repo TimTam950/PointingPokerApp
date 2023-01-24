@@ -1,14 +1,29 @@
+.active-lobby-container {
+  border: 2px solid black;
+  border-radius: 30px;
+  width: 75%;
+  height: 75%;
+  background-color: white;
+  margin: auto;
+  h1 {
+    margin-left: 15px;
+  }
+  .connected-users {
+    margin-left: 15px;
+    .connected-user {
+      display: flex;
+      .userName {
+        margin-right: 10px;
+      }
+      .userValue {
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
 .black-square {
   background-color: black;
   width: 20px;
   height: 20px;
-}
-
-.connectedUsers {
-  .userName {
-    margin-right: 10px;
-  }
-  .userValue {
-    margin-left: 10px;
-  }
 }
