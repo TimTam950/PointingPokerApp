@@ -1,3 +1,5 @@
+import logging
+
 from app.models.connection import Connection
 from app.models.outgoing_message import OutgoingMessage
 import app.models.message_types as MessageTypes
@@ -5,6 +7,7 @@ from typing import List, Dict
 
 
 class ConnectionManager:
+
     def __init__(self):
         self.active_connections: Dict[str, List] = {}
 
@@ -25,7 +28,6 @@ class ConnectionManager:
 
     async def broadcast(self, connection: Connection, message: OutgoingMessage):
         lobby_connections = self.__get_lobby_connections(connection.lobby_name)
-        print(message.to_json())
         for connection in lobby_connections:
             await connection.socket.send_json(message.to_json())
 

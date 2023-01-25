@@ -5,19 +5,27 @@
   height: 75%;
   background-color: white;
   margin: auto;
+  text-align: center;
   h1 {
     margin-left: 15px;
   }
   .connected-users {
     margin-left: 15px;
+    margin-bottom: 20px;
     .connected-user {
-      display: flex;
+      text-align: center;
       .userName {
         margin-right: 10px;
       }
       .userValue {
         margin-left: 10px;
       }
+    }
+  }
+
+  .voting-buttons {
+    button {
+      margin-left: 10px;
     }
   }
 }

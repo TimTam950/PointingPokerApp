@@ -1,25 +1,44 @@
+import json
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from websockets.exceptions import ConnectionClosedError
+
 from app.models.connection_manager import ConnectionManager
 from app.models.connection import Connection
+from app.models.incoming_message import IncomingMessage
 from app.models.outgoing_message import OutgoingMessage
 import app.models.message_types as MessageTypes
-from fastapi.logger import logger
+from app.core.logger_factory import create_logger
+
 router = APIRouter()
 
 connection_manager = ConnectionManager()
 
+logger = create_logger(__name__)
+
 
 @router.websocket("/ws/{lobby_name}/{client_name}")
 async def websocket_endpoint(websocket: WebSocket, lobby_name: str, client_name: str):
-    connection = Connection(client_name, lobby_name, websocket)
-    await connection_manager.connect(connection)
-    logger.info(f"{client_name} has connected to {lobby_name} successfully")
     try:
+        connection = Connection(client_name, lobby_name, websocket)
+        await connection_manager.connect(connection)
+        logger.info(f"{connection.client_name} has connected to {connection.lobby_name}")
         while True:
             data = await websocket.receive_text()
-            message = OutgoingMessage(client_name, data, MessageTypes.VOTE_CAST[0])
+            incoming_message = IncomingMessage(**json.loads(data))
+            logger.info(f"incoming message type {incoming_message.message_type}, incoming message {incoming_message.message}")
+            if incoming_message.message_type == MessageTypes.VOTE_CAST:
+                message = OutgoingMessage(client_name, incoming_message.message, MessageTypes.VOTE_CAST)
+            elif incoming_message.message_type == MessageTypes.SHOW_VOTES:
+                message = OutgoingMessage(client_name, "", MessageTypes.SHOW_VOTES)
+            elif incoming_message.message_type == MessageTypes.CLEAR_VOTES:
+                message = OutgoingMessage(client_name, "", MessageTypes.CLEAR_VOTES)
             await connection_manager.broadcast(connection, message)
-    except WebSocketDisconnect:
-        connection_manager.disconnect(lobby_name, connection)
-        await connection_manager.broadcast(lobby_name, "Client #{client_id} left the chat")
+    except (ConnectionClosedError, WebSocketDisconnect):
+        __user_disconnects(connection)
+
+
+async def __user_disconnects(connection: Connection):
+    connection_manager.disconnect(connection)
+
 

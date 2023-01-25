@@ -19,6 +19,8 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
   lobbyWebSocket!: WebSocketSubject<unknown>;
   connectedUsers: UserVote[] = [];
 
+  voteOptions: number[] = [1,2,3,5,8,13,21,34]
+
   constructor(private route: ActivatedRoute) {
 
   }
@@ -34,23 +36,55 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
       if(socketMessage.message_type === "NEW_USER_CONNECTED") {
         this.addNewClients(socketMessage);
       } else if (socketMessage.message_type === "VOTE_CAST") {
-        const voteToUpdate = this.connectedUsers.find(vote => vote.name === socketMessage.client_name);
-
+        this.connectedUsers = this.connectedUsers.map(connectedUser => {
+          if (connectedUser.name === socketMessage.client_name) {
+            connectedUser.vote = parseInt(socketMessage.message)
+          }
+          return connectedUser
+        })
+      } else if (socketMessage.message_type === "SHOW_VOTES") {
+        this.showVotes()
+      } else if (socketMessage.message_type === "CLEAR_VOTES") {
+        this.clearVotes()
       }
     });
 
   }
 
   addNewClients(socketMessage: SocketMessage) {
-    const connectedClients = socketMessage.message.split(",")
+    const connectedClients = socketMessage.message.split(",");
     for(const connectedClient of connectedClients) {
       if(!this.connectedUsers.some(existingUser => existingUser.name === connectedClient)) {
-        this.connectedUsers.push(new UserVote(connectedClient))
+        this.connectedUsers.push(new UserVote(connectedClient));
       }
     }
   }
 
+  castVote(vote: number) {
+    this.lobbyWebSocket.next({message: vote, message_type: "VOTE_CAST"});
+  }
+
+  showVotesMessage() {
+    this.lobbyWebSocket.next({message: "", message_type: "SHOW_VOTES"});
+  }
+
+  showVotes() {
+    this.connectedUsers.map(user => user.show = true);
+  }
+
+  clearVotesMessage() {
+    this.lobbyWebSocket.next({message: "", message_type: "CLEAR_VOTES"})
+  }
+
+  clearVotes() {
+    this.connectedUsers.map(user => {
+      user.vote = -1;
+      user.show = false;
+    });
+  }
+
   ngOnDestroy(): void {
     this.routeSubscription.unsubscribe();
+    this.lobbyWebSocket.unsubscribe();
   }
 }

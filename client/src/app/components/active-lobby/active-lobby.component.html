@@ -7,10 +7,18 @@
       </div>
       <div class="userValue" style="display: inline-block">
         <div *ngIf="user.show; else hiddenVote">
-
+          {{user.vote}}
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="voting-buttons">
+    <button mat-raised-button color="primary" *ngFor="let option of voteOptions" (click)="castVote(option)">
+      {{option}}
+    </button>
+    <button mat-button color="primary" (click)="showVotesMessage()">Show Votes</button>
+    <button mat-button color="primary" (click)="clearVotesMessage()">Clear Votes</button>
   </div>
 </div>
 
