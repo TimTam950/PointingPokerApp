@@ -26,7 +26,7 @@ async def websocket_endpoint(websocket: WebSocket, lobby_name: str, client_name:
         while True:
             data = await websocket.receive_text()
             incoming_message = IncomingMessage(**json.loads(data))
-            logger.info(f"incoming message type {incoming_message.message_type}, incoming message {incoming_message.message}")
+            logger.info(f"lobby id {lobby_name} incoming message type {incoming_message.message_type}, incoming message {incoming_message.message}")
             if incoming_message.message_type == MessageTypes.VOTE_CAST:
                 message = OutgoingMessage(client_name, incoming_message.message, MessageTypes.VOTE_CAST)
             elif incoming_message.message_type == MessageTypes.SHOW_VOTES:
@@ -35,7 +35,7 @@ async def websocket_endpoint(websocket: WebSocket, lobby_name: str, client_name:
                 message = OutgoingMessage(client_name, "", MessageTypes.CLEAR_VOTES)
             await connection_manager.broadcast(connection, message)
     except (ConnectionClosedError, WebSocketDisconnect):
-        __user_disconnects(connection)
+        await __user_disconnects(connection)
 
 
 async def __user_disconnects(connection: Connection):

@@ -2,7 +2,7 @@
   border: 2px solid black;
   border-radius: 30px;
   width: 75%;
-  height: 75%;
+  height: 90%;
   background-color: white;
   margin: auto;
   text-align: center;
@@ -12,6 +12,8 @@
   .connected-users {
     margin-left: 15px;
     margin-bottom: 20px;
+    image {}
+    margin-left: 10px;
     .connected-user {
       text-align: center;
       .userName {
@@ -24,9 +26,18 @@
   }
 
   .voting-buttons {
+    bottom: 75%;
     button {
       margin-left: 10px;
     }
+  }
+
+  .visualizations {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 10px;
+    margin-top: 20px;
+    width: 20%;
   }
 }
 

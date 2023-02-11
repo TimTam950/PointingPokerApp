@@ -14,6 +14,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { ExistingLobbyComponent } from './components/existing-lobby/existing-lobby.component';
 import { ActiveLobbyComponent } from './components/active-lobby/active-lobby.component'
 import {MatInputModule} from "@angular/material/input";
+import {CdTimerModule} from "angular-cd-timer";
+import { VotePieChartComponent } from './components/pie-chart/vote-pie-chart.component';
 
 const routes: Routes = [
   { path: 'home', component: HomePageComponent },
@@ -27,7 +29,8 @@ const routes: Routes = [
     NewLobbyComponent,
     HomePageComponent,
     ExistingLobbyComponent,
-    ActiveLobbyComponent
+    ActiveLobbyComponent,
+    VotePieChartComponent
   ],
   imports: [
     BrowserModule,
@@ -39,7 +42,8 @@ const routes: Routes = [
     MatButtonModule,
     RouterModule.forRoot(routes),
     MatInputModule,
-    FormsModule
+    FormsModule,
+    CdTimerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

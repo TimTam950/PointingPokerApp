@@ -1,7 +1,14 @@
 <div class="active-lobby-container">
   <h1>Welcome to your pointing poker lobby :)</h1>
+  <div class="timer" style="margin-bottom: 20px;">
+    <cd-timer #timerComponent></cd-timer>
+  </div>
+
   <div class="connected-users">
     <div class="connected-user" *ngFor="let user of connectedUsers">
+      <div *ngIf="user.hasVoted" style="display: inline-block">
+        <img src="assets/images/checkmark.png">
+      </div>
       <div class="userName" style="display: inline-block">
         {{user.name}}
       </div>
@@ -20,6 +27,24 @@
     <button mat-button color="primary" (click)="showVotesMessage()">Show Votes</button>
     <button mat-button color="primary" (click)="clearVotesMessage()">Clear Votes</button>
   </div>
+
+  <mat-grid-list cols="2" rowHeight="2:1">
+    <mat-grid-tile>
+      <mat-card *ngIf="areStatsShowing">
+        <mat-card-header>
+          <h1>Central Tendency</h1>
+        </mat-card-header>
+        <mat-card-content>
+          <p *ngFor="let stat of statistics | keyvalue">
+            {{stat.key}}: {{stat.value}}
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <app-pie-chart *ngIf="areStatsShowing" [inputData]="this.connectedUsers"></app-pie-chart>
+    </mat-grid-tile>
+  </mat-grid-list>
 </div>
 
 

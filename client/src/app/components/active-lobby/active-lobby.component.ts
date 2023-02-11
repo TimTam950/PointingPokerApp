@@ -1,9 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Subscription} from "rxjs";
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import SocketMessage from "../../models/SocketMessage";
 import UserVote from "../../models/UserVote";
+import {StatisticsService} from "../../services/statistics.service";
+import {CdTimerComponent} from "angular-cd-timer";
 
 @Component({
   selector: 'app-active-lobby',
@@ -21,7 +23,14 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
 
   voteOptions: number[] = [1,2,3,5,8,13,21,34]
 
-  constructor(private route: ActivatedRoute) {
+  statistics: Map<string, number> = new Map<string, number>();
+
+  areStatsShowing = false;
+
+  @ViewChild('timerComponent')
+  timer!: CdTimerComponent;
+
+  constructor(private route: ActivatedRoute, private statService: StatisticsService) {
 
   }
 
@@ -36,19 +45,29 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
       if(socketMessage.message_type === "NEW_USER_CONNECTED") {
         this.addNewClients(socketMessage);
       } else if (socketMessage.message_type === "VOTE_CAST") {
-        this.connectedUsers = this.connectedUsers.map(connectedUser => {
-          if (connectedUser.name === socketMessage.client_name) {
-            connectedUser.vote = parseInt(socketMessage.message)
-          }
-          return connectedUser
-        })
+        this.updateUserVote(socketMessage);
       } else if (socketMessage.message_type === "SHOW_VOTES") {
         this.showVotes()
+        this.calculateStatistics()
+        this.showStatistics();
       } else if (socketMessage.message_type === "CLEAR_VOTES") {
+        this.hideStatistics()
         this.clearVotes()
+        this.timer.reset()
+        this.timer.start()
       }
     });
 
+  }
+
+  updateUserVote(socketMessage: SocketMessage) {
+    this.connectedUsers = this.connectedUsers.map(connectedUser => {
+      if (connectedUser.name === socketMessage.client_name) {
+        connectedUser.vote = parseInt(socketMessage.message)
+        connectedUser.hasVoted = true;
+      }
+      return connectedUser
+    })
   }
 
   addNewClients(socketMessage: SocketMessage) {
@@ -80,7 +99,24 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
     this.connectedUsers.map(user => {
       user.vote = -1;
       user.show = false;
+      user.hasVoted = false;
     });
+  }
+
+  calculateStatistics() {
+    const votes = this.connectedUsers.map(userVote => userVote.vote)
+    this.statistics.set("Mean", this.statService.mean(votes))
+    this.statistics.set("Median", this.statService.median(votes))
+    this.statistics.set("Mode", this.statService.mode(votes))
+    this.statistics.set("Standard Deviation", this.statService.standardDeviation(votes))
+  }
+
+  showStatistics() {
+    this.areStatsShowing = true;
+  }
+
+  hideStatistics() {
+    this.areStatsShowing = false;
   }
 
   ngOnDestroy(): void {
