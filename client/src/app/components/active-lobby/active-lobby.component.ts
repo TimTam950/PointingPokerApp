@@ -6,6 +6,7 @@ import SocketMessage from "../../models/SocketMessage";
 import UserVote from "../../models/UserVote";
 import {StatisticsService} from "../../services/statistics.service";
 import {CdTimerComponent} from "angular-cd-timer";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: 'app-active-lobby',
@@ -38,7 +39,7 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.paramMap.subscribe(paramMap => {
       this.connectedUser = paramMap.get('connectedUser');
       this.lobbyId = paramMap.get('lobbyId');
-      this.lobbyWebSocket = webSocket(`ws://127.0.0.1:8000/ws/${this.lobbyId}/${this.connectedUser}`);
+      this.lobbyWebSocket = webSocket(`wss://${environment.apiRootUrl}/ws/${this.lobbyId}/${this.connectedUser}`);
     })
     this.lobbyWebSocket.subscribe(dataFromSocket => {
       const socketMessage = JSON.parse(dataFromSocket as string) as SocketMessage;
