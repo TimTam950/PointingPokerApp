@@ -39,7 +39,7 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.paramMap.subscribe(paramMap => {
       this.connectedUser = paramMap.get('connectedUser');
       this.lobbyId = paramMap.get('lobbyId');
-      this.lobbyWebSocket = webSocket(`wss://${environment.apiRootUrl}/ws/${this.lobbyId}/${this.connectedUser}`);
+      this.lobbyWebSocket = webSocket(`ws://${environment.apiRootUrl}/ws/${this.lobbyId}/${this.connectedUser}`);
     })
     this.lobbyWebSocket.subscribe(dataFromSocket => {
       const socketMessage = JSON.parse(dataFromSocket as string) as SocketMessage;
