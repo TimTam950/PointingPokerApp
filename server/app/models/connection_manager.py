@@ -1,9 +1,10 @@
-import logging
-
+from app.core.logger_factory import create_logger
 from app.models.connection import Connection
 from app.models.outgoing_message import OutgoingMessage
 import app.models.message_types as MessageTypes
 from typing import List, Dict
+
+logger = create_logger(__name__)
 
 
 class ConnectionManager:
@@ -20,16 +21,19 @@ class ConnectionManager:
             self.active_connections[connection.lobby_name] = [connection]
         await self.__send_current_clients(connection)
 
-    def disconnect(self, connection: Connection):
+    async def disconnect(self, connection: Connection):
         lobby_connections = self.__get_lobby_connections(connection.lobby_name)
         lobby_connections.remove(connection)
         if len(lobby_connections) == 0:
             self.active_connections.pop(connection.lobby_name)
+        disconnect_message = OutgoingMessage(connection.client_name, "", MessageTypes.DISCONNECT)
+        await self.broadcast(connection, disconnect_message)
 
     async def broadcast(self, connection: Connection, message: OutgoingMessage):
+        logger.info(f'broadcasting: {message}')
         lobby_connections = self.__get_lobby_connections(connection.lobby_name)
-        for connection in lobby_connections:
-            await connection.socket.send_json(message.to_json())
+        for lobby_connection in lobby_connections:
+            await lobby_connection.socket.send_json(message.to_json())
 
     def __get_lobby_connections(self, lobby_name):
         if lobby_name not in self.active_connections:

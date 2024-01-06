@@ -1,5 +1,6 @@
 <div class="active-lobby-container">
   <h1>Welcome to your pointing poker lobby :)</h1>
+  <button mat-raised-button color="basic" [cdkCopyToClipboard]="lobbyId!">Copy room code</button>
   <div class="timer" style="margin-bottom: 20px;">
     <cd-timer #timerComponent></cd-timer>
   </div>

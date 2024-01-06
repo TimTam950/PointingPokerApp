@@ -39,7 +39,7 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.route.paramMap.subscribe(paramMap => {
       this.connectedUser = paramMap.get('connectedUser');
       this.lobbyId = paramMap.get('lobbyId');
-      this.lobbyWebSocket = webSocket(`wss://${environment.apiRootUrl}/ws/${this.lobbyId}/${this.connectedUser}`);
+      this.lobbyWebSocket = webSocket(`ws://${environment.apiRootUrl}/ws/${this.lobbyId}/${this.connectedUser}`);
     })
     this.lobbyWebSocket.subscribe(dataFromSocket => {
       const socketMessage = JSON.parse(dataFromSocket as string) as SocketMessage;
@@ -56,6 +56,8 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
         this.clearVotes()
         this.timer.reset()
         this.timer.start()
+      } else if (socketMessage.message_type === "DISCONNECT") {
+        this.removeUser(socketMessage);
       }
     });
 
@@ -78,6 +80,10 @@ export class ActiveLobbyComponent implements OnInit, OnDestroy {
         this.connectedUsers.push(new UserVote(connectedClient));
       }
     }
+  }
+
+  removeUser(socketMesasge: SocketMessage) {
+    this.connectedUsers = this.connectedUsers.filter(connectedUser => connectedUser.name !== socketMesasge.client_name)
   }
 
   castVote(vote: number) {

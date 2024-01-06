@@ -39,6 +39,6 @@ async def websocket_endpoint(websocket: WebSocket, lobby_name: str, client_name:
 
 
 async def __user_disconnects(connection: Connection):
-    connection_manager.disconnect(connection)
+    await connection_manager.disconnect(connection)
 
 

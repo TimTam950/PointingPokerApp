@@ -16,6 +16,7 @@ import { ActiveLobbyComponent } from './components/active-lobby/active-lobby.com
 import {MatInputModule} from "@angular/material/input";
 import {CdTimerModule} from "angular-cd-timer";
 import { VotePieChartComponent } from './components/pie-chart/vote-pie-chart.component';
+import {ClipboardModule} from "@angular/cdk/clipboard";
 
 const routes: Routes = [
   { path: 'home', component: HomePageComponent },
@@ -43,7 +44,8 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
     MatInputModule,
     FormsModule,
-    CdTimerModule
+    CdTimerModule,
+    ClipboardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -10,3 +10,6 @@ class OutgoingMessage:
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__)
+
+    def __str__(self):
+        return f'{{"client_name": {self.client_name}, "message": {self.message}, "message_type": {self.message_type}}}'
